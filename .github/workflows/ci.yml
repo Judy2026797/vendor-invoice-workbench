@@ -1,0 +1,33 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Syntax check (py_compile)
+        run: |
+          python -m py_compile server.py scripts/import_vendor_xlsx.py
+          echo "py_compile OK"
+
+      - name: Import smoke test
+        run: |
+          python - <<'PY'
+          import ast, sys
+          for f in ("server.py", "scripts/import_vendor_xlsx.py"):
+              with open(f, encoding="utf-8") as fh:
+                  ast.parse(fh.read(), filename=f)
+              print("parsed", f)
+          PY

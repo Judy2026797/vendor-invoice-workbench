@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<title>登录 · 供应商发票工作台</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, "Segoe UI", "Microsoft YaHei", sans-serif;
+    background: #f4f6f9;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .card {
+    background: #fff;
+    width: 360px;
+    border-radius: 12px;
+    padding: 40px 36px;
+    box-shadow: 0 1px 3px rgba(0,0,0,.06), 0 8px 24px rgba(0,0,0,.06);
+  }
+  .brand { display: flex; align-items: center; gap: 10px; margin-bottom: 28px; }
+  .mark {
+    width: 40px; height: 40px; border-radius: 10px;
+    background: #185FA5; color: #fff;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px; font-weight: 500;
+  }
+  .title { font-size: 18px; font-weight: 500; color: #1a1a1a; }
+  .sub { font-size: 13px; color: #888; margin-top: 2px; }
+  label { display: block; font-size: 13px; color: #555; margin-bottom: 6px; }
+  input {
+    width: 100%; height: 42px; border: 1px solid #d9d9d9; border-radius: 8px;
+    padding: 0 12px; font-size: 14px; margin-bottom: 16px; outline: none;
+  }
+  input:focus { border-color: #185FA5; box-shadow: 0 0 0 2px rgba(24,95,165,.12); }
+  button {
+    width: 100%; height: 44px; border: none; border-radius: 8px;
+    background: #185FA5; color: #fff; font-size: 15px; cursor: pointer;
+  }
+  button:hover { background: #0C447C; }
+  button:disabled { background: #85B7EB; cursor: not-allowed; }
+  .err { color: #d64545; font-size: 13px; margin-bottom: 12px; min-height: 18px; }
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="brand">
+    <div class="mark">¥</div>
+    <div>
+      <div class="title">供应商发票工作台</div>
+      <div class="sub">Vendor Invoice Workbench</div>
+    </div>
+  </div>
+  <label for="u">用户名</label>
+  <input id="u" autocomplete="username" placeholder="请输入用户名" autofocus>
+  <label for="p">密码</label>
+  <input id="p" type="password" autocomplete="current-password" placeholder="请输入密码">
+  <div class="err" id="err"></div>
+  <button id="btn" onclick="doLogin()">登录</button>
+</div>
+<script>
+function $(id){ return document.getElementById(id); }
+function doLogin(){
+  var u = $('u').value.trim();
+  var p = $('p').value;
+  if(!u || !p){ $('err').textContent = '请输入用户名和密码'; return; }
+  var btn = $('btn'); btn.disabled = true; btn.textContent = '登录中…';
+  var xhr = new XMLHttpRequest();
+  xhr.open('POST', '/api/login', true);
+  xhr.setRequestHeader('Content-Type', 'application/json');
+  xhr.onreadystatechange = function(){
+    if(xhr.readyState !== 4) return;
+    btn.disabled = false; btn.textContent = '登录';
+    if(xhr.status === 200){
+      location.href = '/';
+    } else {
+      var msg = '登录失败';
+      try { var r = JSON.parse(xhr.responseText); msg = r.msg || msg; } catch(e){}
+      $('err').textContent = msg;
+    }
+  };
+  xhr.send(JSON.stringify({ username: u, password: p }));
+}
+document.addEventListener('keydown', function(e){
+  if(e.key === 'Enter') doLogin();
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<title>供应商发票工作台</title>
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+<div class="topbar">
+  <div class="mark">¥</div>
+  <h1>供应商发票工作台</h1>
+  <div class="spacer"></div>
+  <span class="user" id="userBadge"></span>
+  <button onclick="doLogout()">退出</button>
+</div>
+
+<div class="toolbar">
+  <button class="btn" id="addBtn" onclick="openForm()">+ 新增发票</button>
+  <button class="btn ghost" id="importBtn" onclick="document.getElementById('csvFile').click()">导入 CSV</button>
+  <input type="file" id="csvFile" accept=".csv" style="display:none" onchange="importCsv(this)">
+  <button class="btn ghost" onclick="exportCsv()">导出 CSV</button>
+  <input class="search" id="q" placeholder="搜索 发票号/服务/备注/供应商" oninput="debounceLoad()">
+  <input id="fVendor" placeholder="供应商(短名)" style="width:140px" oninput="debounceLoad()">
+  <input id="fPeriod" placeholder="期间 2026-07" style="width:120px" oninput="debounceLoad()">
+  <select id="fPayStatus" onchange="load()">
+    <option value="">付款状态</option>
+    <option value="未付">未付</option>
+    <option value="已付">已付</option>
+    <option value="部分支付">部分支付</option>
+  </select>
+  <button class="btn ghost" onclick="load()">刷新</button>
+</div>
+
+<div class="wrap">
+  <table>
+    <thead>
+      <tr>
+        <th>发票号</th><th>供应商</th><th>供应商全称</th><th>开票日</th><th>期间</th>
+        <th>站点</th><th>服务</th>
+        <th class="num">不含税</th><th class="num">GST</th><th class="num">含税</th>
+        <th>币种</th><th>BPM单号</th><th>付款状态</th><th>付款单号</th><th>操作</th>
+      </tr>
+    </thead>
+    <tbody id="tbody"></tbody>
+  </table>
+  <div class="empty" id="empty" style="display:none">暂无发票记录</div>
+</div>
+
+<!-- 录入/编辑弹窗 -->
+<div class="overlay" id="overlay">
+  <div class="modal">
+    <h2 id="formTitle">新增供应商发票</h2>
+    <div class="body">
+      <div class="reject" id="reject"></div>
+      <div class="msg" id="formMsg"></div>
+      <div class="grid2">
+        <div class="field"><label>发票号 *</label><input id="f_invoice_no" oninput="onKeyChange()"></div>
+        <div class="field"><label>供应商(短名) *</label><input id="f_vendor" oninput="onKeyChange()"></div>
+        <div class="field wide"><label>供应商全称</label><input id="f_vendor_full"></div>
+        <div class="field"><label>开票日期</label><input id="f_invoice_date" placeholder="2026-07-15"></div>
+        <div class="field"><label>期间</label><input id="f_period" placeholder="2026-07"></div>
+        <div class="field"><label>站点</label><input id="f_site"></div>
+        <div class="field"><label>服务</label><input id="f_service"></div>
+        <div class="field"><label>不含税金额</label><input id="f_ex_tax" type="number" step="0.01"></div>
+        <div class="field"><label>GST</label><input id="f_gst" type="number" step="0.01"></div>
+        <div class="field"><label>含税金额</label><input id="f_amount" type="number" step="0.01"></div>
+        <div class="field"><label>币种</label><input id="f_currency" value="INR"></div>
+        <div class="field"><label>BPM 付款申请单号</label><input id="f_bpm_no" placeholder="如 HTFK2026..."></div>
+        <div class="field wide"><label>备注</label><input id="f_note"></div>
+        <div class="field"><label>付款状态</label>
+          <select id="f_pay_status"><option>未付</option><option>已付</option><option>部分支付</option></select>
+        </div>
+        <div class="field"><label>付款单号</label><input id="f_pay_no"></div>
+        <div class="field"><label>付款日期</label><input id="f_pay_date"></div>
+        <div class="field wide"><label>数据来源</label><input id="f_src"></div>
+      </div>
+    </div>
+    <div class="foot">
+      <button class="btn ghost" onclick="closeForm()">取消</button>
+      <button class="btn" id="saveBtn" onclick="save()">保存</button>
+    </div>
+  </div>
+</div>
+
+<script src="assets/js/app.js?v=20260821-standalone"></script>
+</body>
+</html>

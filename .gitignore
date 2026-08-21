@@ -1,0 +1,27 @@
+# ===== 数据库（含真实发票数据 + 密码哈希，禁止入仓） =====
+workbench.db
+workbench.db-wal
+workbench.db-shm
+*.db
+*.db-wal
+*.db-shm
+
+# ===== 环境变量 / 密钥 =====
+.env
+*.env
+sonal_service_account.json
+
+# ===== 运行时产物 =====
+*.log
+server.run.log
+__pycache__/
+*.pyc
+
+# ===== 业务数据目录（如有） =====
+data/
+backups/
+
+# ===== 编辑器 / 系统 =====
+.workbuddy/
+.DS_Store
+.vscode/
